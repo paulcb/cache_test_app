@@ -1,0 +1,22 @@
+
+services:
+  postgresql-cache-test:
+    build:
+      context: .
+      dockerfile: ./DockerfilePostgresql
+    ports:
+      - "${POSTGRES_PORT}:5432"
+    environment:
+      PGDATA: /var/lib/postgresql/data/data1/
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+  redis-cache-test:
+    # image: "redis/redis-stack"
+    build:
+      context: .
+      dockerfile: ./DockerfileRedis
+    ports:
+      - "${REDIS_PORT}:6379"
+  memcached-cache-test:
+    image: "memcached"
+    ports:
+      - "${MEMCACHED_PORT}:11211"

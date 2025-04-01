@@ -1,0 +1,6 @@
+SQLAlchemy
+psycopg2-binary
+pymemcache
+redis
+pandas
+llist

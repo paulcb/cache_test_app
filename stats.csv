@@ -1,0 +1,6 @@
+cache_type,trace_file,mins,hrs,mean_response (m/s),mean_hit_response (m/s),mean_miss_response (m/s),throughput (per sec),hit_rate %,miss_rate %
+PythonDict,test1.txt,0.0016,0.0000,0.9747,0.6924,1.1476,1025.9999,0.3800,0.6200
+Redis,test1.txt,0.0017,0.0000,1.0213,0.5473,1.3118,979.1567,0.3800,0.6200
+PostgreSQL,test1.txt,0.0023,0.0000,1.3901,0.6455,1.8464,719.3986,0.3800,0.6200
+PostgreSQL,test1.txt,0.0029,0.0000,1.7181,0.7166,2.3320,582.0275,0.3800,0.6200
+Memcached,test1.txt,0.0525,0.0009,31.4769,27.7099,33.7858,31.7693,0.3800,0.6200

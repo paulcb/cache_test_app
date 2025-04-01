@@ -1,0 +1,10 @@
+# syntax=docker/dockerfile:1
+FROM redis/redis-stack
+#                    37000000
+#                    314572800
+# EXPOSE 6379
+RUN cat /opt/redis-stack/etc/redis-stack.conf > /redis-stack.conf
+# RUN echo "\nmaxmemory 31000000\n" >> /redis-stack.conf
+# RUN echo "maxmemory-policy allkeys-lru\n" >> /redis-stack.conf
+RUN echo "\nmaxmemory 0\n" >> /redis-stack.conf
+ENTRYPOINT [ "/entrypoint.sh", "/opt/redis-stack/etc/redis-stack.conf" ]
