@@ -80,10 +80,10 @@ csvtool readable stats.csv | view -
 ```
 
 ## Other scripts
-scripts/arc_data_group.py - process arc trace files for making sql files for using in app
-scripts/gen_test_stats.py - gen a csv table from app log data
-scripts/make_sql_dump.py - generate table containing cache request origin data
-scripts/rand_trace_data.py - gen random trace and sql file for using in app
+- scripts/arc_data_group.py - process arc trace files for making sql files for using in app
+- scripts/gen_test_stats.py - gen a csv table from app log data
+- scripts/make_sql_dump.py - generate table containing cache request origin data
+- scripts/rand_trace_data.py - gen random trace and sql file for using in app
 ## Authors
 
 Paul Basinger  
