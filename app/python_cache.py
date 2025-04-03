@@ -6,8 +6,9 @@ from cache import Cache
 from cache_enum import CacheType
 from postgres_db import fetch_data_auto
 
-# This class if just mention to caputer performance on a constant time cache using a Python dictionary
-# TODO: update to use a LRU or LFU with cache size and doubly linked list queue to preserve constant operations
+# Used in cache_test_app to capture raw runtime performance of a cache outside of connecting to services
+# like Redis
+# TODO: Seperate LRU cache as object for PythonCache?
 class PythonCache(Cache):
     lock = threading.Lock()
 
