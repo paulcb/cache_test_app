@@ -1,3 +1,7 @@
+"""
+Cache class for caching data.
+"""
+
 import threading
 import time
 import queue
@@ -11,7 +15,29 @@ from cache_enum import CacheType
 from postgres_db import get_engine
 
 class Cache:
+    """
+    Cache class for caching data.
+    
+    Attributes:
+    thread_count (int): Number of threads to use for caching.
+    log_dir_path (str): Path to the log directory.
+    tracefile_name (str): Name of the trace file.
+    table_name (str): Name of the cache table.
+    """
+
     def __init__(self, thread_count, tracefile_name, log_dir_path, table_name):
+        """
+        Initializes the Cache instance.
+        
+        Parameters:
+        thread_count (int): Number of threads to use for caching.
+        tracefile_name (str): Name of the trace file.
+        log_dir_path (str): Path to the log directory.
+        table_name (str): Name of the cache table.
+        
+        Raises:
+        Exception: If thread_count is less than 1.
+        """
         if thread_count < 1:
             raise Exception("thread_count less than 1")
         self.thread_count = thread_count
@@ -35,25 +61,46 @@ class Cache:
         BaseSourceTable.prepare()
         self.SourceTable = BaseSourceTable.classes[self.table_name]
 
-
     def prep_cache(self):
+        """
+        Prepares the cache by flushing all data and closing the connection.
+        """
         pass
 
     def close(self):
-
+        """
+        Closes all threads and connections.
+        """
         for worker_thread in self.cache_worker_threads:
             worker_thread.join()
         self.log_thread.join()
 
     def process_key(self, cache_conn, key, count, threadNumber):
+        """
+        Processes a cache key.
+        
+        Parameters:
+        cache_conn (Client): Memcache client object.
+        key (str): Key to process.
+        count (int): Count to process.
+        threadNumber (int): Thread number.
+        """
         pass
 
     def create_connection(self):
+        """
+        Creates a connection to the Memcache server.
+        
+        Returns:
+        Client: A Memcache client object.
+        """
         return None
 
     def worker_threads(self):
+        """
+        Initializes the worker threads and log thread.
+        """
         try:
-
             self.log_thread = threading.Thread(target=self.cache_log_worker)
             self.log_thread.start()
             for thread_number in range(self.thread_count):
@@ -67,6 +114,9 @@ class Cache:
             raise
 
     def cache_log_worker(self):
+        """
+        Logs cache data to a file.
+        """
         datetime_object = datetime.datetime.now()
         string_format = "%d_%m_%Y_%H_%M"
         formatted_string = datetime_object.strftime(string_format)
@@ -102,6 +152,12 @@ class Cache:
         log_file.close()
 
     def cache_worker(self, threadNumber):
+        """
+        Processes cache keys.
+        
+        Parameters:
+        threadNumber (int): Thread number.
+        """
         # child class specific
         cache_conn = self.create_connection()
         while True:
@@ -116,6 +172,18 @@ class Cache:
             self.process_key(cache_conn, key, count, threadNumber)
 
     def log_cache(self, threadNumber, count, stime, key=None, value=None, hit=False, debug=False):
+        """
+        Logs cache data to the log queue.
+        
+        Parameters:
+        threadNumber (int): Thread number.
+        count (int): Count to process.
+        stime (float): Start time.
+        key (str): Key to log.
+        value (str): Value to log.
+        hit (bool): Whether the cache hit.
+        debug (bool): Whether to print debug information.
+        """
         log_item = {"cache_action": hit if "hit" else "miss",
                     "thread_number": threadNumber,
                     "count": count, "delta_time": self.delta_time(stime),
@@ -126,6 +194,12 @@ class Cache:
         self.request_log_queue.put(log_item)
 
     def next_queue_value(self):
+        """
+        Gets the next value from the key queue.
+        
+        Returns:
+        tuple: Key, count, and queue empty flag.
+        """
         key = None
         count = None
         queue_empty = False
@@ -139,6 +213,15 @@ class Cache:
         return key, count, queue_empty
 
     def delta_time(self, stime):
+        """
+        Calculates the delta time.
+        
+        Parameters:
+        stime (float): Start time.
+        
+        Returns:
+        str: Delta time in milliseconds.
+        """
         end_time = (time.time() - stime) * 1000
         delta = "{:.4f}".format(end_time)
         return delta

@@ -1,3 +1,7 @@
+"""
+Cache management class for SQLAlchemy database.
+"""
+
 from sqlalchemy.sql import func
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 from sqlalchemy import Integer, DateTime, Index, String
@@ -8,16 +12,27 @@ import datetime
 import time
 import traceback
 
-
 from cache_enum import CacheType
 from cache import Cache
 from postgres_db import fetch_data_auto
 
 class Base(DeclarativeBase):
+    """
+    Base class for all database tables.
+    """
     pass
 
 
 class CacheTable(Base):
+    """
+    Cache table class for SQLAlchemy database.
+    
+    Attributes:
+    id (int): Unique identifier for the cache entry.
+    key (str): Unique key for the cache entry.
+    value (str): Value associated with the cache entry.
+    inserted_at (datetime.datetime): Timestamp when the cache entry was inserted.
+    """
     __tablename__ = "cache"
     __table_args__ = {"prefixes": ["UNLOGGED"]}
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
@@ -25,12 +40,28 @@ class CacheTable(Base):
     value = mapped_column(String)
     inserted_at: Mapped[datetime.datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now())
-    # last_used: Mapped[datetime.datetime] = mapped_column(
-    # DateTime(timezone=True), server_default=func.now())
 
 
 class PostgresCache(Cache):
+    """
+    Postgres cache class for SQLAlchemy database.
+    
+    Attributes:
+    thread_count (int): Number of threads to use for caching.
+    trace_file_name (str): Name of the trace file.
+    log_dir_path (str): Path to the log directory.
+    table_name (str): Name of the cache table.
+    """
     def __init__(self, thread_count, trace_file_name, log_dir_path, table_name):
+        """
+        Initializes the Postgres cache instance.
+        
+        Parameters:
+        thread_count (int): Number of threads to use for caching.
+        trace_file_name (str): Name of the trace file.
+        log_dir_path (str): Path to the log directory.
+        table_name (str): Name of the cache table.
+        """
         super().__init__(thread_count, trace_file_name, log_dir_path, table_name)
         self.cache_type = CacheType.SQLALCHEMY
 
@@ -39,10 +70,20 @@ class PostgresCache(Cache):
         self.worker_threads()
 
     def create_connection(self):
+        """
+        Creates a connection to the database.
+        
+        Returns:
+        Session: A SQLAlchemy session object.
+        """
         return self.Session
 
     def prep_cache(self):
+        """
+        Prepares the cache table for use.
         
+        Drops all existing tables, creates the cache table, and sets up a cron job to clean up the cache.
+        """
         Base.metadata.drop_all(self.engine)
         Base.metadata.create_all(self.engine)
 
@@ -68,6 +109,16 @@ class PostgresCache(Cache):
         session.close()
 
     def postres_cache_get(self, key, session):
+        """
+        Retrieves a cache entry by key.
+        
+        Parameters:
+        key (str): Key to retrieve.
+        session (Session): SQLAlchemy session object.
+        
+        Returns:
+        CacheTable: The cache entry if found, otherwise None.
+        """
         cacheRes = session.query(CacheTable).where(CacheTable.key == key).all()
         if len(cacheRes) > 1:
             raise Exception(
@@ -78,7 +129,15 @@ class PostgresCache(Cache):
         return None
 
     def process_key(self, Session, key, count, threadNumber):
-
+        """
+        Processes a cache key.
+        
+        Parameters:
+        Session (Session): SQLAlchemy session object.
+        key (str): Key to process.
+        count (int): Count to process.
+        threadNumber (int): Thread number.
+        """
         stime = time.time()
         session = Session()
         session.begin()
