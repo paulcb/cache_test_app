@@ -181,15 +181,15 @@ class PythonCache(Cache):
         self.lock.acquire()
         try:
             if self.lrucache.has(key):
-                value = self.get_from_cache(key)
+                valueBytes = self.lrucache.get_from_cache(key)
 
                 self.log_cache(threadNumber, count, stime,
-                               key, value, True, False)
+                               key, bytes.hex(valueBytes), True, False)
             else:
                 value = fetch_data_auto(
                     self.SourceTable, key, None, self.Session)
                 cacheBytes = bytes.fromhex(value)
-                self.set_cache(key, cacheBytes)
+                self.lrucache.set_cache(key, cacheBytes)
                 self.log_cache(threadNumber, count, stime,
                                key, value, False, False)
         finally:
