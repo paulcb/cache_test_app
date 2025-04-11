@@ -25,4 +25,4 @@ class CacheType(Enum):
     MEMCACHE = 3
 
     # A cache that uses a Python dictionary
-    PYTHON_DICT = 4
+    PYTHON_CACHE = 4

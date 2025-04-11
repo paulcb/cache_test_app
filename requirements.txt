@@ -4,3 +4,4 @@ pymemcache
 redis
 pandas
 llist
+pytest

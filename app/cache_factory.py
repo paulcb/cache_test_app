@@ -32,7 +32,7 @@ def create_cache(cache_type: CacheType,
         ValueError: If the cache type is not a valid CacheType enum value.
     """
     tracefile_name = tracefile_path.split("/")[-1]
-    if cache_type not in [CacheType.SQLALCHEMY, CacheType.REDIS, CacheType.MEMCACHE, CacheType.PYTHON_DICT]:
+    if cache_type not in [CacheType.SQLALCHEMY, CacheType.REDIS, CacheType.MEMCACHE, CacheType.PYTHON_CACHE]:
         raise ValueError("Invalid cache type. Supported types are: {}".format(
             [t.value for t in CacheType]))
     elif cache_type == CacheType.SQLALCHEMY:
@@ -41,5 +41,5 @@ def create_cache(cache_type: CacheType,
         return RedisCache(thread_count, tracefile_name, log_dir_path, table_name)
     elif cache_type == CacheType.MEMCACHE:
         return MemcacheCache(thread_count, tracefile_name, log_dir_path, table_name)
-    elif cache_type == CacheType.PYTHON_DICT:
+    elif cache_type == CacheType.PYTHON_CACHE:
         return PythonCache(thread_count, tracefile_name, log_dir_path, table_name)
